@@ -15,8 +15,13 @@ public class CTScanImages2 {
 	   private int[] histogramValues = new int[256];
 	   private static String answer1;
 	   private static String answer2;
-	   boolean yesTrue1;
-	   boolean yesTrue2;
+	   private static String answer3;
+	   private boolean yesTrue1;
+	   private boolean yesTrue2;
+	   private boolean yesTrue3;
+	   private int transformSum = 0;
+	   private int transform;
+	   private int[] transformHistogram = new int[256];
 	   
 	   public CTScanImages2() {
 	      try {
@@ -25,28 +30,58 @@ public class CTScanImages2 {
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
+	         yesTrue3 = answer3.equals("Yes") || answer3.equals("yes") || answer3.equals("YES") || answer3.equals("Y") || answer3.equals("y");
 	         for(int i=yStart; i<yStart + 100; i++){
 	            for(int j=xStart; j<xStart + 100; j++){
                    Color c = new Color(image.getRGB(j, i));
 	               rawValue = (int) Math.round(c.getRed()*0.21 + c.getGreen()*0.72 + c.getBlue()*0.07);
 	               for (int k =0; k < 256; k++){
-	            	   if(k == rawValue){histogramValues[k] = histogramValues[k] + 1;}
-	               }
+	            	   if(k == rawValue){
+	            		   histogramValues[k] = histogramValues[k] + 1;
+	            		   break;
+	            	   	} //End 'if' statement
+	               } //End 'for' loop
 	               if(yesTrue1){
+	               transformSum = transformSum + rawValue;
 	               System.out.printf("%3d",rawValue);	               
 	               System.out.print("  ");
 	               } //End of 'If' Statement
-	               }
+	               } //End 'for' loop
 	            if(yesTrue1){System.out.println("");}
 	            
-	         }
+	         } //End 'for' loop
 	         if(yesTrue1){System.out.println("*****************END OF RAW PIXEL VALUES*********************");}
 	         
 	         for (int m = 0; m < 256; m++){
 	        	 if (yesTrue2){
 	        		 System.out.println(histogramValues[m]);
 	        	 } //End of 'If' Statement
-	         } //End of 'for' Statement
+	         } //End of 'for' loop
+	         if (yesTrue2){System.out.println("****************END OF HISTOGRAM VALUES*********************");}
+	         transform = 255/ transformSum;
+	         for (int m = 0; m < 256; m++){
+	        	 transformHistogram[m] = transform * histogramValues[m];
+	         } //End of 'for' loop
+	      
+	         for(int i=yStart; i<yStart + 100; i++){
+		            for(int j=xStart; j<xStart + 100; j++){
+	                   Color c = new Color(image.getRGB(j, i));
+		               rawValue = (int) Math.round(c.getRed()*0.21 + c.getGreen()*0.72 + c.getBlue()*0.07);
+		               for (int k =0; k < 256; k++){
+		            	   if(k == rawValue){
+		            		   rawValue = transformHistogram[k];
+		            		   break;
+		            	   	} //End 'if' statement
+		               } //End 'for' loop
+		               if(yesTrue3){
+		               System.out.printf("%3d",rawValue);	               
+		               System.out.print("  ");
+		               } //End of 'If' Statement
+		               } //End 'for' loop
+		            if(yesTrue3){System.out.println("");}
+		            
+		         } //End 'for' loop
+	      
 	      } catch (Exception e) {}
 	   }
 	   public static void main(String args[]) throws Exception 
@@ -55,11 +90,13 @@ public class CTScanImages2 {
 	      xStart = myScanner.nextInt();
 	      System.out.print("Y Start: ");
 	      yStart = myScanner.nextInt();
-		  System.out.print("Would you like the raw values?: ");
+		  System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = myScanner.next();
 		  System.out.println("Would you like the historgram values?: ");
 		  answer2 = myScanner.next();
-	      CTScanImages2 obj = new CTScanImages2();
+	      System.out.println("Would you like the histogram equalized pixel values?: ");
+	      answer3 = myScanner.next();
+		  CTScanImages2 obj = new CTScanImages2();
 	   }
 	}
 	
