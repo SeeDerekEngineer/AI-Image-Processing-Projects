@@ -31,13 +31,13 @@ public class CTScanImages2 {
 	   private double cdvMax=0;
 	   private double[] cdv = new double[256];
 	   File f = null;
-	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);
-	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);
+	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
+	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
 	   
 	   public CTScanImages2() {
 	      try {
-	         File input = new File("Scans" + File.separator
-            + "mal8-65 center.jpg");
+	         File input = new File("Scans" + File.separator    //Obtain the jpeg file
+            + "Malignant 9-63 center.jpg");
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
@@ -125,7 +125,7 @@ public class CTScanImages2 {
 	   //Build the new image
 	   if(yesTrue4){
 		   f = new File("Scans" + File.separator
-            + "mal8-G65.png");
+            + "focusedMal9G63.png");
 		   try {
 			ImageIO.write(img, "png", f);
 		} catch (IOException e) {
@@ -136,7 +136,7 @@ public class CTScanImages2 {
 	  
 	   if(yesTrue5){
 		   f = new File("Scans" + File.separator
-            + "mal8-Eg65.png");
+            + "focusedMal9Eg63.png");
 		   try {
 			ImageIO.write(img2, "png", f);
 		} catch (IOException e) {
@@ -149,21 +149,26 @@ public class CTScanImages2 {
 	   
 	   public static void main(String args[]) throws Exception 
 	   {
-	      xStart = 0;
-	      yStart = 0;
-	      xEnd = 512;
-	      yEnd = 512;
+	      xStart = 95;
+	      yStart = 249;
+	      xEnd = 195;
+	      yEnd = 349;
 	      
-		  System.out.print("Would you like the raw pixel values?: ");
-		  answer1 = myScanner.next();
-		  System.out.println("Would you like the historgram values?: ");
-		  answer2 = myScanner.next();
-	      System.out.println("Would you like the histogram equalized pixel values?: ");
-	      answer3 = myScanner.next();
-		  System.out.println("Would you like the grayscale image?: ");
-		  answer4 = myScanner.next();
-		  System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = myScanner.next();
+		  //System.out.print("Would you like the raw pixel values?: ");
+		  answer1 = "No";
+				  //myScanner.next();
+		  //System.out.println("Would you like the historgram values?: ");
+		  answer2 = "No";
+				  //myScanner.next();
+	      //System.out.println("Would you like the histogram equalized pixel values?: ");
+	      answer3 = "No";
+	    		  //myScanner.next();
+		  //System.out.println("Would you like the grayscale image?: ");
+		  answer4 = "Yes";
+				  //myScanner.next();
+		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
+		  answer5 = "Yes";
+				  //myScanner.next();
 	      CTScanImages2 obj = new CTScanImages2();
 	   }
 	}
