@@ -20,13 +20,16 @@ public class CTScanImages2 {
 	   private static String answer3;
 	   private static String answer4;
 	   private static String answer5;
+	   private static String answer6;
 	   private boolean yesTrue1;
 	   private boolean yesTrue2;
 	   private boolean yesTrue3;
 	   private boolean yesTrue4;
 	   private boolean yesTrue5;
+	   private boolean yesTrue6;
 	   private double pixelsTotal = 0;
 	   private int[] transformHistogram = new int[256];
+	   private int[] equalizedHistogram = new int[256];
 	   private double cdvMin=255;
 	   private double cdvMax=0;
 	   private double[] cdv = new double[256];
@@ -44,6 +47,7 @@ public class CTScanImages2 {
 	         yesTrue3 = answer3.equals("Yes") || answer3.equals("yes") || answer3.equals("YES") || answer3.equals("Y") || answer3.equals("y");
 	         yesTrue4 = answer4.equals("Yes") || answer4.equals("yes") || answer4.equals("YES") || answer4.equals("Y") || answer4.equals("y");
 	         yesTrue5 = answer5.equals("Yes") || answer5.equals("yes") || answer5.equals("YES") || answer5.equals("Y") || answer5.equals("y");
+	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
 	         for(int i=yStart; i<yEnd; i++){
 	            for(int j=xStart; j<xEnd; j++){
                    Color c = new Color(image.getRGB(j, i));
@@ -78,6 +82,7 @@ public class CTScanImages2 {
 	         
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	         
 	         //Establish cdv variable used for histogram equalization of pixel values
+	         //Print histogram values
 	         
 	         for (int m = 0; m < 256; m++){
 	        	 pixelsTotal = pixelsTotal + histogramValues[m];
@@ -89,6 +94,7 @@ public class CTScanImages2 {
 	         if (yesTrue2){System.out.println("****************END OF HISTOGRAM VALUES*********************");}
 	         
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	         
+	         //Establish histogram equalized pixel values
 	         
 	         for (int m = 0; m < 256; m++){
 	        	 transformHistogram[m] = (int) Math.round((((cdv[m]-cdvMin)/(pixelsTotal - cdvMin))*255));
@@ -107,6 +113,12 @@ public class CTScanImages2 {
 		            		   break;
 		            	   	} //End 'if' statement
 		               } //End 'for' loop
+		               for (int k = 0; k< 256; k++){
+		            	   if(k == rawValue){
+		            		   equalizedHistogram[k] = equalizedHistogram[k] + 1;
+		            		   break;
+		            	   } //End 'if' statement
+		               } //End 'for' loop
 		               if(yesTrue3){
 		               System.out.printf("%3d",rawValue);	               
 		               System.out.print("  ");
@@ -120,10 +132,14 @@ public class CTScanImages2 {
 	      
 	      }  //End of 'try' block
 	      catch (Exception e) {}
+	      
+	      for (int m = 0; m < 256; m++){
+	    	  if(yesTrue6){System.out.println(equalizedHistogram[m]);}
+	         } //End of 'for' loop
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	  
-	      
 	   //Build the new image
+	      
 	   if(yesTrue4){
 		   f = new File("Scans" + File.separator
             + "focusedMal9G63.png");
@@ -168,7 +184,9 @@ public class CTScanImages2 {
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
 		  answer5 = "No";
 				  //myScanner.next();
-	      CTScanImages2 obj = new CTScanImages2();
+		  System.out.println("Would you like the equalized histogram values?: ");
+		  answer6 = myScanner.next();
+		  CTScanImages2 obj = new CTScanImages2();
 	   }
 	}
 	
