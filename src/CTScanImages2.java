@@ -166,26 +166,26 @@ public class CTScanImages2 {
 	   
 	   public static void main(String args[]) throws Exception 
 	   {
-	      xStart = 95;
-	      yStart = 249;
-	      xEnd = 195;
-	      yEnd = 349;
+	      xStart = 120;
+	      yStart = 274;
+	      xEnd = 170;
+	      yEnd = 324;
 	      
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
 				  //myScanner.next();
 		  System.out.println("Would you like the historgram values?: ");
-		  answer2 = myScanner.next();
+		  answer2 = "Yes";
 	      //System.out.println("Would you like the histogram equalized pixel values?: ");
 	      answer3 = "No";
 	    		  //myScanner.next();
-		  System.out.println("Would you like the grayscale image?: ");
-		  answer4 = myScanner.next();
+		  //System.out.println("Would you like the grayscale image?: ");
+		  answer4 = "Yes";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "No";
+		  answer5 = "Yes";
 				  //myScanner.next();
-		  System.out.println("Would you like the equalized histogram values?: ");
-		  answer6 = myScanner.next();
+		  //System.out.println("Would you like the equalized histogram values?: ");
+		  answer6 = "Yes";
 		  CTScanImages2 obj = new CTScanImages2();
 	   }
 	}
