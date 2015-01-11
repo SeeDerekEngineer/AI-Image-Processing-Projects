@@ -50,10 +50,10 @@ public class CTScanImages2 {
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
-	               rawValue = red+green+blue;
+	               rawValue = red+green+blue;			//Establish pixel values
 	               Color newColor = new Color(rawValue,
 	               rawValue,rawValue);
-	               img.setRGB(j,i,newColor.getRGB());
+	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
 	                       
 	               
 	               
@@ -77,6 +77,7 @@ public class CTScanImages2 {
 	         if(yesTrue1){System.out.println("*****************END OF RAW PIXEL VALUES*********************");}
 	         
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	         
+	         //Establish cdv variable used for histogram equalization of pixel values
 	         
 	         for (int m = 0; m < 256; m++){
 	        	 pixelsTotal = pixelsTotal + histogramValues[m];
@@ -157,17 +158,15 @@ public class CTScanImages2 {
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
 				  //myScanner.next();
-		  //System.out.println("Would you like the historgram values?: ");
-		  answer2 = "No";
-				  //myScanner.next();
+		  System.out.println("Would you like the historgram values?: ");
+		  answer2 = myScanner.next();
 	      //System.out.println("Would you like the histogram equalized pixel values?: ");
 	      answer3 = "No";
 	    		  //myScanner.next();
-		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
-				  //myScanner.next();
+		  System.out.println("Would you like the grayscale image?: ");
+		  answer4 = myScanner.next();
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "Yes";
+		  answer5 = "No";
 				  //myScanner.next();
 	      CTScanImages2 obj = new CTScanImages2();
 	   }
