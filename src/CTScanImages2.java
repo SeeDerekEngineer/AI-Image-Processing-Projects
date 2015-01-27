@@ -9,10 +9,6 @@ import javax.swing.JFrame;
 public class CTScanImages2 {
 	   private static Scanner myScanner = new Scanner(System.in);
 	   private BufferedImage  image;
-	   private static int xStart;
-	   private static int yStart;
-	   private static int xEnd;
-	   private static int yEnd;
 	   private int rawValue;
 	   private int[] histogramValues = new int[256];
 	   private static String answer1;
@@ -34,13 +30,19 @@ public class CTScanImages2 {
 	   private double cdvMax=0;
 	   private double[] cdv = new double[256];
 	   File f = null;
-	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
-	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+	   BufferedImage img = new BufferedImage(xStart+50, yStart+50, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
+	   BufferedImage img2 = new BufferedImage(xStart+50, yStart+50, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+	   private static int xStart = 167;
+	   private static int yStart = 273;
+	   private static int xEnd;
+	   private static int yEnd;
+	
 	   
 	   public CTScanImages2() {
 	      try {
-	         File input = new File("Scans" + File.separator    //Obtain the jpeg file
-            + "Malignant 9-63 center.jpg");
+	    	  
+	    	  File input = new File("TestSetCenterImages" + File.separator    //Obtain the jpeg file
+            + "CT060-133.jpg");
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
@@ -48,8 +50,8 @@ public class CTScanImages2 {
 	         yesTrue4 = answer4.equals("Yes") || answer4.equals("yes") || answer4.equals("YES") || answer4.equals("Y") || answer4.equals("y");
 	         yesTrue5 = answer5.equals("Yes") || answer5.equals("yes") || answer5.equals("YES") || answer5.equals("Y") || answer5.equals("y");
 	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
-	         for(int i=yStart; i<yEnd; i++){
-	            for(int j=xStart; j<xEnd; j++){
+	         for(int i=yStart; i<yStart+50; i++){
+	            for(int j=xStart; j<xStart+50; j++){
                    Color c = new Color(image.getRGB(j, i));
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
@@ -100,8 +102,8 @@ public class CTScanImages2 {
 	        	 transformHistogram[m] = (int) Math.round((((cdv[m]-cdvMin)/(pixelsTotal - cdvMin))*255));
 	         } //End of 'for' loop
 	      
-	         for(int i=yStart; i<yEnd; i++){
-		            for(int j=xStart; j<xEnd; j++){
+	         for(int i=yStart; i<yStart+50; i++){
+		            for(int j=xStart; j<xStart+50; j++){
 	                   Color c = new Color(image.getRGB(j, i));
 	                   int red = (int)(c.getRed() * 0.299);
 		               int green = (int)(c.getGreen() * 0.587);
@@ -133,16 +135,18 @@ public class CTScanImages2 {
 	      }  //End of 'try' block
 	      catch (Exception e) {}
 	      
+	      // Print Equalized Histogram Values
 	      for (int m = 0; m < 256; m++){
-	    	  if(yesTrue6){System.out.println(equalizedHistogram[m]);}
+	    	  if(yesTrue6){System.out.print(equalizedHistogram[m]);
+	    	  			System.out.print("\t");}
 	         } //End of 'for' loop
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	  
 	   //Build the new image
 	      
 	   if(yesTrue4){
-		   f = new File("Scans" + File.separator
-            + "focusedMal9G63.png");
+		   f = new File("Scans3" + File.separator
+            + "gTest.png");
 		   try {
 			ImageIO.write(img, "png", f);
 		} catch (IOException e) {
@@ -152,8 +156,8 @@ public class CTScanImages2 {
 	   }
 	  
 	   if(yesTrue5){
-		   f = new File("Scans" + File.separator
-            + "focusedMal9Eg63.png");
+		   f = new File("Scans3" + File.separator
+            + "egTest.png");
 		   try {
 			ImageIO.write(img2, "png", f);
 		} catch (IOException e) {
@@ -166,23 +170,24 @@ public class CTScanImages2 {
 	   
 	   public static void main(String args[]) throws Exception 
 	   {
-	      xStart = 120;
-	      yStart = 274;
-	      xEnd = 170;
-	      yEnd = 324;
-	      
+	     
+		      //xStart = 103;
+		      //xEnd = 382;
+		      //yStart = 249;
+		      //yEnd = 275;
+		   
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
 				  //myScanner.next();
-		  System.out.println("Would you like the historgram values?: ");
-		  answer2 = "Yes";
+		  //System.out.println("Would you like the historgram values?: ");
+		  answer2 = "No";
 	      //System.out.println("Would you like the histogram equalized pixel values?: ");
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
+		  answer4 = "No";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "Yes";
+		  answer5 = "No";
 				  //myScanner.next();
 		  //System.out.println("Would you like the equalized histogram values?: ");
 		  answer6 = "Yes";
