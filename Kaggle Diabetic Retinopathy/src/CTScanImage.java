@@ -61,7 +61,7 @@ public class CTScanImage {
 	         yesTrue5 = answer5.equals("Yes") || answer5.equals("yes") || answer5.equals("YES") || answer5.equals("Y") || answer5.equals("y");
 	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
 	         yesTrue7 = answer7.equals("Yes") || answer7.equals("yes") || answer7.equals("YES") || answer7.equals("Y") || answer7.equals("y");
-	         
+	     
 	         for(int i=yStart; i<yEnd ; i++){
 	            for(int j=xStart; j<xEnd ; j++){
                    Color c = new Color(image.getRGB(j, i));
