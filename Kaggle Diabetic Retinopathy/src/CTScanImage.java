@@ -9,10 +9,6 @@ import javax.swing.JFrame;
 public class CTScanImage {
 	   private static Scanner myScanner = new Scanner(System.in);
 	   private BufferedImage  image;
-	   private int[][] rawValue = new int[xEnd][yEnd];
-	   private int[][] lhnewValue = new int[xEnd][yEnd];
-	   private int[][] lhAverage = new int[xEnd][yEnd];
-	   private int[][] count = new int[xEnd][yEnd]; 
 	   private int[] histogramValues = new int[256];
 	   private static String answer1;
 	   private static String answer2;
@@ -35,30 +31,60 @@ public class CTScanImage {
 	   private double cdvMax=0;
 	   private double[] cdv = new double[256];
 	   File f = null;
+	  
+	   private static double compassConstant = 0.7071;
+	   private int[] differences = new int[8];
+	   
+	
+	   private int xStart = 0;							///////////////////////////////////////
+	   private int xEnd = 2094;							
+	   private int yStart = 0;							
+	   private int yEnd = 2112;
+	   private int boxXStart = 0;
+	   private int 	boxXEnd = 2094;						///////// Your Parameters Here ////////
+	   private int 	boxXStart2 = 0;
+	   private int boxXEnd2 = 2094;
+	   private int boxYStart = 0;
+	   private int boxYEnd = 2112;
+	   private int increment = 2112;
+	   private String imgFile = "10_left.jpeg";			///////////////////////////////////////
+	   
 	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
 	   BufferedImage img3 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
-	   private static int xStart;
-	   private static int yStart;
-	   private static int xEnd;
-	   private static int yEnd;
-	   private static int boxXStart;
-	   private static int boxXEnd;
-	   private static int boxXStart2;
-	   private static int boxXEnd2;
-	   private static int boxYStart;
-	   private static int boxYEnd;
-	   private static double compassConstant = 0.7071;
-	   private int[] differences = new int[8];
-	   private static int increment;
 	   
-	
+	   private int[][] rawValue = new int[xEnd][yEnd];
+	   private int[][] lhnewValue = new int[xEnd][yEnd];
+	   private int[][] lhAverage = new int[xEnd][yEnd];
+	   private int[][] count = new int[xEnd][yEnd]; 
 	   
 	   public CTScanImage() {
 	      try {
 	    	  
+		     
+		   
+		  //System.out.print("Would you like the raw pixel values?: ");
+		  answer1 = "No";
+				  //myScanner.next();
+		  //System.out.println("Would you like the historgram values?: ");
+		  answer2 = "No";
+	      //System.out.println("Would you like the histogram equalized pixel values?: ");
+	      answer3 = "No";
+	    		  //myScanner.next();
+		  //System.out.println("Would you like the grayscale image?: ");
+		  answer4 = "Yes";
+		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
+		  answer5 = "Yes";
+				  //myScanner.next();
+		  //System.out.println("Would you like the equalized histogram values?: ");
+		  answer6 = "No";
+		  //System.out.println("Would you like the Compass Image?");
+		  answer7 = "No";
+		  
+	    	  
+	    	  
 	    	  File input = new File("Scans" + File.separator    //Obtain the jpeg file
-            + "16_left.jpeg");
+            + imgFile);
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
@@ -68,6 +94,10 @@ public class CTScanImage {
 	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
 	         yesTrue7 = answer7.equals("Yes") || answer7.equals("yes") || answer7.equals("YES") || answer7.equals("Y") || answer7.equals("y");
 	     
+	        
+	          
+	         
+	         
 	         for(int i=yStart; i<yEnd ; i++){
 	            for(int j=xStart; j<xEnd ; j++){
                    Color c = new Color(image.getRGB(j, i));
@@ -81,9 +111,9 @@ public class CTScanImage {
 	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
 	            }
 	         }
-	         
-	         for (int zz = 0; zz < 100; zz++){						//Start of local histogram equalization loop y, block out when not using lh
-	 		 for (int z = 0; z < 100; z++){                          //Start of local histogram equalization loop x, block out when not using lh
+	        
+lhLoop:	     for (int zz = 0; zz < 1000; zz++){						//Start of local histogram equalization loop y, block out when not using lh
+	 		 for (int z = 0; z < 1000; z++){                         //Start of local histogram equalization loop x, block out when not using lh
 outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' for lh, set to xStart for Compass or other histogram
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
 /*	               if(j > 0 && i > 0){								   // Block out when not using Compass Gradient 
@@ -129,10 +159,12 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' f
 		            	
 		          for (int k =0; k < 256; k++){     //Establish Histogram values
 	            	   if(k == rawValue[j][i]){
-	            		   histogramValues[k] = histogramValues[k] + 1;  
+	            		   histogramValues[k] = histogramValues[k] + 1;  	   
 	            		   break;
 	            	   	} //End 'if' statement
-	               } //End 'for' loop
+	            	  
+	    		            		 
+		           } //End 'for' loop
 	               cdv[0] = histogramValues[0];
 	               
 	               if(yesTrue1){
@@ -178,8 +210,6 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		                
 	           
 	        if(j >= xEnd){
-	        	
-	        	
 	        	break;
 	        }//End if statement
 		               
@@ -197,7 +227,8 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		            		   count[j][i]++;								//Block out if not using lh with averaging
 		            		   lhnewValue[j][i] = (lhnewValue[j][i] + transformHistogram[k]);
 		            		   lhAverage[j][i] = lhnewValue[j][i]/count[j][i];
-		            		   if(j>=500 && i>=500 && j<550 && i <550){System.out.println(transformHistogram[k] + " " + count[j][i]);}
+		            //		   if(j>=500 && i>=500 && j<550 && i <550){
+		    	    // 			   System.out.println(rawValue[j][i] + " " + histogramValues[k] + " " + count[j][i]);}	   
 		            		   break;
 		            	   	} //End 'if' statement
 		               } //End 'for' loop
@@ -221,24 +252,26 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		               img2.setRGB(j, i, newColor2.getRGB());
 		 //              }
 		               
-		               if(rawValue[j][i] > 250) {
+		              /* if(rawValue[j][i] > 250) {
 		            	   rawValue[j][i] = 255;
 		               }	else {rawValue[j][i] = 0;}
 		               Color newColor3 = new Color(rawValue[j][i],
 		            		   rawValue[j][i], rawValue[j][i]);
 	               		img3.setRGB(j, i, newColor3.getRGB());
-	      				} //End 'for' loop
+	      	*/			} //End 'for' loop
 		           // if(yesTrue3){System.out.println("");}  
 		         } //End 'for' loop
-	
+			
 	
 		
-		
+	if(boxXStart == xStart && boxXEnd == xEnd && boxYStart == yStart && boxYEnd == yEnd ){	//To prevent lh equalization
+		break lhLoop;
+	}
 		
 												//Block out this section when not using lh
 	
 		System.out.println(z);
-		
+	
 		for(int k = 0; k < 256; k++){				//for loop to reset histogram algorithms
 			histogramValues[k] = 0;					//This is for local histogram equalization.  
 			cdv[k] = 0;
@@ -311,38 +344,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	   
 	   public static void main(String args[]) throws Exception 
 	   {
-	     
-		      xStart = 0;
-		      xEnd = 2592;
-		      yStart = 0;
-		      yEnd = 1728;
-		      boxXStart = 0;
-		      boxXEnd = 1000;
-		      boxXStart2 = 0;
-		      boxXEnd2 = 1000;
-		      boxYStart = 0;
-		      boxYEnd = 1000;
-		      increment = 500;
-		   
-		  //System.out.print("Would you like the raw pixel values?: ");
-		  answer1 = "No";
-				  //myScanner.next();
-		  //System.out.println("Would you like the historgram values?: ");
-		  answer2 = "No";
-	      //System.out.println("Would you like the histogram equalized pixel values?: ");
-	      answer3 = "No";
-	    		  //myScanner.next();
-		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
-		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "Yes";
-				  //myScanner.next();
-		  //System.out.println("Would you like the equalized histogram values?: ");
-		  answer6 = "No";
-		  //System.out.println("Would you like the Compass Image?");
-		  answer7 = "No";
-		  
-		  
+	     		  
 		  CTScanImage obj = new CTScanImage();
 	   }
 	}
