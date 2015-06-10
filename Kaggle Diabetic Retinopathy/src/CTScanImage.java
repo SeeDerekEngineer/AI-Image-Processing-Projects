@@ -10,6 +10,9 @@ public class CTScanImage {
 	   private static Scanner myScanner = new Scanner(System.in);
 	   private BufferedImage  image;
 	   private int[][] rawValue = new int[xEnd][yEnd];
+	   private int[][] lhnewValue = new int[xEnd][yEnd];
+	   private int[][] lhAverage = new int[xEnd][yEnd];
+	   private int[][] count = new int[xEnd][yEnd]; 
 	   private int[] histogramValues = new int[256];
 	   private static String answer1;
 	   private static String answer2;
@@ -41,18 +44,21 @@ public class CTScanImage {
 	   private static int yEnd;
 	   private static int boxXStart;
 	   private static int boxXEnd;
+	   private static int boxXStart2;
+	   private static int boxXEnd2;
 	   private static int boxYStart;
 	   private static int boxYEnd;
 	   private static double compassConstant = 0.7071;
 	   private int[] differences = new int[8];
 	   private static int increment;
+	   
 	
 	   
 	   public CTScanImage() {
 	      try {
 	    	  
 	    	  File input = new File("Scans" + File.separator    //Obtain the jpeg file
-            + "10_left.jpeg");
+            + "16_left.jpeg");
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
@@ -75,11 +81,12 @@ public class CTScanImage {
 	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
 	            }
 	         }
-	 for (int zz = 0; zz < 60; zz++){						//Start of local histogram equalization loop y
-	 for (int z = 0; z < 50; z++){                          //Start of local histogram equalization loop x
-	         for(int i=boxYStart; i<boxYEnd ; i++){
+	         
+	         for (int zz = 0; zz < 100; zz++){						//Start of local histogram equalization loop y, block out when not using lh
+	 		 for (int z = 0; z < 100; z++){                          //Start of local histogram equalization loop x, block out when not using lh
+outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' for lh, set to xStart for Compass or other histogram
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
-/*	               if(j > 0 && i > 0){
+/*	               if(j > 0 && i > 0){								   // Block out when not using Compass Gradient 
 	               differences[0] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j-1][i-1] - rawValue[j][i])));
 	               }	else {differences[0] = 0;}
 	               if(i > 0){
@@ -105,12 +112,22 @@ public class CTScanImage {
 	               }	else {differences[7] = 0;}
 	              
 	               rawValue[j][i] = differences[0];
-	               for(int z = 1; z < 8; z++){
-	            	   if(differences[z] > rawValue[j][i]){rawValue[j][i] = differences[z];} 
+	               for(int dd = 1; dd < 8; dd++){
+	            	   if(differences[dd] > rawValue[j][i]){rawValue[j][i] = differences[dd];} 
 	               }
 */	               
-	               
-	               for (int k =0; k < 256; k++){     //Establish Histogram values
+		           
+		            	 if(j >= xEnd){
+		     	        	break;
+		     	        }//End if statement
+		     		               
+		     	        if(i >= yEnd){
+		     	        	break outerloop;
+		     	        }  
+	             
+		            	
+		            	
+		          for (int k =0; k < 256; k++){     //Establish Histogram values
 	            	   if(k == rawValue[j][i]){
 	            		   histogramValues[k] = histogramValues[k] + 1;  
 	            		   break;
@@ -149,8 +166,8 @@ public class CTScanImage {
 	         for (int m = 0; m < 256; m++){
 	        	 transformHistogram[m] = (int) Math.round((((cdv[m]-cdvMin)/(pixelsTotal - cdvMin))*255));
 	         } //End of 'for' loop
-	      
-	         for(int i=boxYStart; i<boxYEnd ; i++){
+	         
+outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		            for(int j=boxXStart; j<boxXEnd ; j++){
 	         /*          Color c = new Color(image.getRGB(j, i));
 	                   int red = (int)(c.getRed() * 0.299);
@@ -160,16 +177,32 @@ public class CTScanImage {
 		      */          
 		                
 	           
+	        if(j >= xEnd){
+	        	
+	        	
+	        	break;
+	        }//End if statement
+		               
+	        if(i >= yEnd){
+	        	break outloop;
+	        }
+		    
 	        
-		               
-		               
-		               
 		               for (int k =0; k < 256; k++){               //Conversion of pixel values to histogram equalized pixel values
 		            	   if(k == rawValue[j][i]){
-		            		   rawValue[j][i] = transformHistogram[k];
+		            		//   rawValue[j][i] = transformHistogram[k];		//Block out if using lh
+		            		   
+		            		//   newValue[j][i] = transformHistogram[k]; 		//Block out if not using lh
+		            		   
+		            		   count[j][i]++;								//Block out if not using lh with averaging
+		            		   lhnewValue[j][i] = (lhnewValue[j][i] + transformHistogram[k]);
+		            		   lhAverage[j][i] = lhnewValue[j][i]/count[j][i];
+		            		   if(j>=500 && i>=500 && j<550 && i <550){System.out.println(transformHistogram[k] + " " + count[j][i]);}
 		            		   break;
 		            	   	} //End 'if' statement
 		               } //End 'for' loop
+		               
+		               
 		               for (int k = 0; k< 256; k++){
 		            	   if(k == rawValue[j][i]){
 		            		   equalizedHistogram[k] = equalizedHistogram[k] + 1;
@@ -177,14 +210,14 @@ public class CTScanImage {
 		            	   } //End 'if' statement
 		               } //End 'for' loop
 		               if(yesTrue3){
-		               System.out.println(rawValue[j][i]);	               
+		               System.out.println(lhAverage[j][i]);	               
 		              // System.out.print("  ");
 		               } //End of 'If' Statement
 		               
-		               if(rawValue[j][i] > 255){rawValue[j][i] = 255;}
+		               if(lhAverage[j][i] >= 255){lhAverage[j][i] = 255;}
 		 //              if(j >= 492 && j < 592 && i >= 572 && i < 672){
-		               Color newColor2 = new Color(rawValue[j][i],
-		            		   rawValue[j][i], rawValue[j][i]);
+		               Color newColor2 = new Color(lhAverage[j][i],
+		            		   lhAverage[j][i], lhAverage[j][i]);
 		               img2.setRGB(j, i, newColor2.getRGB());
 		 //              }
 		               
@@ -202,12 +235,12 @@ public class CTScanImage {
 		
 		
 		
-		
+												//Block out this section when not using lh
 	
 		System.out.println(z);
 		
 		for(int k = 0; k < 256; k++){				//for loop to reset histogram algorithms
-			histogramValues[k] = 0;
+			histogramValues[k] = 0;					//This is for local histogram equalization.  
 			cdv[k] = 0;
 			cdvMin = 255;
 			cdvMax = 0;
@@ -215,14 +248,14 @@ public class CTScanImage {
 			pixelsTotal = 0;
 		}//End for loop
 	
-		boxXStart = boxXStart + increment;
+		boxXStart = boxXStart + increment;			//The increment is used for local histogram
 		boxXEnd = boxXEnd + increment;
 	
 	}//End local histogram equalization for loop x
 	 	
-	 	boxXStart = 0;
-	 	boxXEnd = 35;
-	 	boxYStart = boxYStart + increment;
+	 	boxXStart = boxXStart2;
+	 	boxXEnd = boxXEnd2;
+	 	boxYStart = boxYStart + increment;			//The increment is used for local histogram
 		boxYEnd = boxYEnd + increment;
 		
 		System.out.println(zz);
@@ -280,14 +313,16 @@ public class CTScanImage {
 	   {
 	     
 		      xStart = 0;
-		      xEnd = 2094;
+		      xEnd = 2592;
 		      yStart = 0;
-		      yEnd = 2112;
+		      yEnd = 1728;
 		      boxXStart = 0;
-		      boxXEnd = 35;
+		      boxXEnd = 1000;
+		      boxXStart2 = 0;
+		      boxXEnd2 = 1000;
 		      boxYStart = 0;
-		      boxYEnd = 35;
-		      increment = 35;
+		      boxYEnd = 1000;
+		      increment = 500;
 		   
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
