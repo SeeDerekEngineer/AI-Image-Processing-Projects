@@ -37,17 +37,17 @@ public class CTScanImage {
 	   
 	
 	   private int xStart = 0;							///////////////////////////////////////
-	   private int xEnd = 2094;							
+	   private int xEnd = 2592;							
 	   private int yStart = 0;							
-	   private int yEnd = 2112;
+	   private int yEnd = 1728;
 	   private int boxXStart = 0;
-	   private int 	boxXEnd = 2094;						///////// Your Parameters Here ////////
+	   private int 	boxXEnd = 2592;						///////// Your Parameters Here ////////
 	   private int 	boxXStart2 = 0;
-	   private int boxXEnd2 = 2094;
+	   private int boxXEnd2 = 2592;
 	   private int boxYStart = 0;
-	   private int boxYEnd = 2112;
-	   private int increment = 2112;
-	   private String imgFile = "10_left.jpeg";			///////////////////////////////////////
+	   private int boxYEnd = 1728;
+	   private int increment = 40;
+	   private String imgFile = "EqualizedScan2.png";			///////////////////////////////////////
 	   
 	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
@@ -72,14 +72,14 @@ public class CTScanImage {
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
+		  answer4 = "No";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "Yes";
+		  answer5 = "No";
 				  //myScanner.next();
 		  //System.out.println("Would you like the equalized histogram values?: ");
 		  answer6 = "No";
 		  //System.out.println("Would you like the Compass Image?");
-		  answer7 = "No";
+		  answer7 = "Yes";
 		  
 	    	  
 	    	  
@@ -105,7 +105,7 @@ public class CTScanImage {
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
 	               rawValue[j][i] = red+green+blue;			//Establish pixel values
-	               
+	               rawValue[j][i] = red;
 	               Color newColor = new Color(rawValue[j][i],
 	               rawValue[j][i],rawValue[j][i]);
 	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
@@ -116,7 +116,7 @@ lhLoop:	     for (int zz = 0; zz < 1000; zz++){						//Start of local histogram 
 	 		 for (int z = 0; z < 1000; z++){                         //Start of local histogram equalization loop x, block out when not using lh
 outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' for lh, set to xStart for Compass or other histogram
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
-/*	               if(j > 0 && i > 0){								   // Block out when not using Compass Gradient 
+	               if(j > 0 && i > 0){								   // Block out when not using Compass Gradient 
 	               differences[0] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j-1][i-1] - rawValue[j][i])));
 	               }	else {differences[0] = 0;}
 	               if(i > 0){
@@ -145,7 +145,7 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' f
 	               for(int dd = 1; dd < 8; dd++){
 	            	   if(differences[dd] > rawValue[j][i]){rawValue[j][i] = differences[dd];} 
 	               }
-*/	               
+	               
 		           
 		            	 if(j >= xEnd){
 		     	        	break;
@@ -222,13 +222,11 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		            	   if(k == rawValue[j][i]){
 		            		//   rawValue[j][i] = transformHistogram[k];		//Block out if using lh
 		            		   
-		            		//   newValue[j][i] = transformHistogram[k]; 		//Block out if not using lh
+		            		   lhAverage[j][i] = transformHistogram[k]; 		//Block out if not using lh
 		            		   
-		            		   count[j][i]++;								//Block out if not using lh with averaging
-		            		   lhnewValue[j][i] = (lhnewValue[j][i] + transformHistogram[k]);
-		            		   lhAverage[j][i] = lhnewValue[j][i]/count[j][i];
-		            //		   if(j>=500 && i>=500 && j<550 && i <550){
-		    	    // 			   System.out.println(rawValue[j][i] + " " + histogramValues[k] + " " + count[j][i]);}	   
+		            //		   count[j][i]++;								//Block out if not using lh with averaging
+		            //		   lhnewValue[j][i] = (lhnewValue[j][i] + transformHistogram[k]);
+		            //		   lhAverage[j][i] = lhnewValue[j][i]/count[j][i];
 		            		   break;
 		            	   	} //End 'if' statement
 		               } //End 'for' loop
@@ -252,13 +250,13 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		               img2.setRGB(j, i, newColor2.getRGB());
 		 //              }
 		               
-		              /* if(rawValue[j][i] > 250) {
-		            	   rawValue[j][i] = 255;
-		               }	else {rawValue[j][i] = 0;}
-		               Color newColor3 = new Color(rawValue[j][i],
-		            		   rawValue[j][i], rawValue[j][i]);
+		              if(lhAverage[j][i] > 10) {							//Block out if not using compass gradient
+		            	   lhAverage[j][i] = 255;
+		               }	else {lhAverage[j][i] = 0;}
+		               Color newColor3 = new Color(lhAverage[j][i],
+		            		   lhAverage[j][i], lhAverage[j][i]);
 	               		img3.setRGB(j, i, newColor3.getRGB());
-	      	*/			} //End 'for' loop
+	      				} //End 'for' loop
 		           // if(yesTrue3){System.out.println("");}  
 		         } //End 'for' loop
 			
@@ -270,7 +268,6 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		
 												//Block out this section when not using lh
 	
-		System.out.println(z);
 	
 		for(int k = 0; k < 256; k++){				//for loop to reset histogram algorithms
 			histogramValues[k] = 0;					//This is for local histogram equalization.  
