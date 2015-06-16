@@ -37,17 +37,17 @@ public class CTScanImage {
 	   
 	
 	   private int xStart = 0;							///////////////////////////////////////
-	   private int xEnd = 2592;							
+	   private int xEnd = 2092;							
 	   private int yStart = 0;							
-	   private int yEnd = 1728;
+	   private int yEnd = 2112;
 	   private int boxXStart = 0;
-	   private int 	boxXEnd = 200;						///////// Your Parameters Here ////////
+	   private int 	boxXEnd = 2092;						///////// Your Parameters Here ////////
 	   private int 	boxXStart2 = 0;
-	   private int boxXEnd2 = 200;
+	   private int boxXEnd2 = 2092;
 	   private int boxYStart = 0;
-	   private int boxYEnd = 200;
+	   private int boxYEnd = 2112;
 	   private int increment = 20;
-	   private String imgFile = "16_left.jpeg";			///////////////////////////////////////
+	   private String imgFile = "EqualizedScan.png";			///////////////////////////////////////
 	   
 	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
@@ -72,14 +72,14 @@ public class CTScanImage {
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
+		  answer4 = "No";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "Yes";
+		  answer5 = "No";
 				  //myScanner.next();
 		  //System.out.println("Would you like the equalized histogram values?: ");
 		  answer6 = "No";
 		  //System.out.println("Would you like the Compass Image?");
-		  answer7 = "No";
+		  answer7 = "Yes";
 		  
 	    	  
 	    	  
@@ -104,8 +104,7 @@ public class CTScanImage {
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
-	   //          rawValue[j][i] = red+green+blue;			//Establish pixel values
-	               rawValue[j][i] = red;
+	               rawValue[j][i] = red+green+blue;			//Establish pixel values
 	               Color newColor = new Color(rawValue[j][i],
 	               rawValue[j][i],rawValue[j][i]);
 	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
