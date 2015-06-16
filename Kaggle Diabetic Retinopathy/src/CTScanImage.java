@@ -37,17 +37,17 @@ public class CTScanImage {
 	   
 	
 	   private int xStart = 0;							///////////////////////////////////////
-	   private int xEnd = 2094;							
+	   private int xEnd = 2592;							
 	   private int yStart = 0;							
-	   private int yEnd = 2112;
+	   private int yEnd = 1728;
 	   private int boxXStart = 0;
-	   private int 	boxXEnd = 400;						///////// Your Parameters Here ////////
+	   private int 	boxXEnd = 200;						///////// Your Parameters Here ////////
 	   private int 	boxXStart2 = 0;
-	   private int boxXEnd2 = 400;
+	   private int boxXEnd2 = 200;
 	   private int boxYStart = 0;
-	   private int boxYEnd = 400;
-	   private int increment = 40;
-	   private String imgFile = "10_left.jpeg";			///////////////////////////////////////
+	   private int boxYEnd = 200;
+	   private int increment = 20;
+	   private String imgFile = "16_left.jpeg";			///////////////////////////////////////
 	   
 	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
@@ -72,7 +72,7 @@ public class CTScanImage {
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "No";
+		  answer4 = "Yes";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
 		  answer5 = "Yes";
 				  //myScanner.next();
@@ -104,7 +104,7 @@ public class CTScanImage {
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
-	               rawValue[j][i] = red+green+blue;			//Establish pixel values
+	   //          rawValue[j][i] = red+green+blue;			//Establish pixel values
 	               rawValue[j][i] = red;
 	               Color newColor = new Color(rawValue[j][i],
 	               rawValue[j][i],rawValue[j][i]);
@@ -253,7 +253,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		 //              }
 		               
 		              if(yesTrue7){
-  	              if(lhAverage[j][i] > 10) {							
+  	              if(lhAverage[j][i] > 0) {							
 		            	   lhAverage[j][i] = 255;
 		               }	
 		              else {lhAverage[j][i] = 0;}
@@ -295,9 +295,13 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	 	boxYStart = boxYStart + increment;			//The increment is used for local histogram
 		boxYEnd = boxYEnd + increment;
 		
-		System.out.println(zz);
+		if(zz < Math.round(yEnd/increment)){System.out.println("Row " + (zz+1) + " assembled out of " + 
+		Math.round(yEnd/increment));
+		} //End if
 		
 	}//End local histogram equalization for loop y
+	        
+	    System.out.println("Image fully assembled.");
 	 
 	      }  //End of 'try' block
 	      catch (Exception e) {System.out.println("Did you put an image, because I got nothing?");}
@@ -312,7 +316,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	      
 	   if(yesTrue4){
 		   f = new File("NewScans" + File.separator
-            + "GrayScan2.png");
+            + "GrayScan.png");
 		   try {
 			ImageIO.write(img, "png", f);
 		} catch (IOException e) {
@@ -323,7 +327,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	  
 	   if(yesTrue5){
 		   f = new File("NewScans" + File.separator
-            + "EqualizedScan2.png");
+            + "EqualizedScan.png");
 		   try {
 			ImageIO.write(img2, "png", f);
 		} catch (IOException e) {
@@ -334,7 +338,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	
 	   if(yesTrue7){
 		   f = new File("NewScans" + File.separator
-		            + "CompassScan2.png");
+		            + "CompassScan.png");
 				   try {
 					ImageIO.write(img3, "png", f);
 				} catch (IOException e) {
