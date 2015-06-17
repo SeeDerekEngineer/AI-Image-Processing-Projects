@@ -17,6 +17,7 @@ public class CTScanImage {
 	   private static String answer5;
 	   private static String answer6;
 	   private static String answer7;
+	   private static String answer8;
 	   private boolean yesTrue1;
 	   private boolean yesTrue2;
 	   private boolean yesTrue3;
@@ -24,9 +25,11 @@ public class CTScanImage {
 	   private boolean yesTrue5;
 	   private boolean yesTrue6;
 	   private boolean yesTrue7;
+	   private boolean yesTrue8;
 	   private double pixelsTotal = 0;
 	   private int[] transformHistogram = new int[256];
 	   private int[] equalizedHistogram = new int[256];
+	   private int[] norEqualizedHistogram = new int[256];
 	   private double cdvMin=255;
 	   private double cdvMax=0;
 	   private double[] cdv = new double[256];
@@ -47,7 +50,7 @@ public class CTScanImage {
 	   private int boxYStart = 0;
 	   private int boxYEnd = 2112;
 	   private int increment = 20;
-	   private String imgFile = "EqualizedScan.png";			///////////////////////////////////////
+	   private String imgFile = "10_left.jpeg";			///////////////////////////////////////
 	   
 	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
@@ -80,7 +83,8 @@ public class CTScanImage {
 		  answer6 = "No";
 		  //System.out.println("Would you like the Compass Image?");
 		  answer7 = "Yes";
-		  
+		  //System.out.println("Would you like the normalized histogram values?");
+		  answer8 = "No";
 	    	  
 	    	  
 	    	  File input = new File("Scans" + File.separator    //Obtain the jpeg file
@@ -93,7 +97,7 @@ public class CTScanImage {
 	         yesTrue5 = answer5.equals("Yes") || answer5.equals("yes") || answer5.equals("YES") || answer5.equals("Y") || answer5.equals("y");
 	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
 	         yesTrue7 = answer7.equals("Yes") || answer7.equals("yes") || answer7.equals("YES") || answer7.equals("Y") || answer7.equals("y");
-	     
+	         yesTrue8 = answer8.equals("Yes") || answer8.equals("yes") || answer8.equals("YES") || answer8.equals("Y") || answer8.equals("y");
 	        
 	          
 	         
@@ -189,10 +193,17 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' f
 	        	 if (histogramValues[m] > cdvMax){cdvMax = histogramValues[m];}
 	        	 if (histogramValues[m] < cdvMin && histogramValues[m] != 0){cdvMin = histogramValues[m];}   //Establish cdvMin
           	     if (m != 0){cdv[m] = cdv[m-1] + histogramValues[m];}   									 //Establish cdv[]
-	        	 if (yesTrue2){System.out.println(histogramValues[m]);} 
+          	     
+          	     if (yesTrue2){System.out.println(histogramValues[m]);} 
+	    
 	         } //End of 'for' loop
 	         if (yesTrue2){System.out.println("****************END OF HISTOGRAM VALUES*********************");}
 	         
+	         for (int m = 0; m < 256; m++){
+	        	 norEqualizedHistogram[m] = (int) ((histogramValues[m]*1000/pixelsTotal));
+	        	 if (yesTrue8){System.out.println(norEqualizedHistogram[m]);}
+	         }
+	         if(yesTrue8){System.out.println("END OF NORMALIZED EQUALIZED HISTOGRAM VALUES");}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	         
 	         //Establish histogram equalized pixel values
 	         
@@ -202,14 +213,7 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' f
 	         
 outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		            for(int j=boxXStart; j<boxXEnd ; j++){
-	         /*          Color c = new Color(image.getRGB(j, i));
-	                   int red = (int)(c.getRed() * 0.299);
-		               int green = (int)(c.getGreen() * 0.587);
-		               int blue = (int)(c.getBlue() *0.114);
-		              rawValue[j][i] = red+green+blue;
-		      */          
-		                
-	           
+	  
 	        if(j >= xEnd){
 	        	break;
 	        }//End if statement
