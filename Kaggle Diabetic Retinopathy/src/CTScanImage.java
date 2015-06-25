@@ -42,10 +42,18 @@ public class CTScanImage {
 	   private BufferedImage img2;
 	   private BufferedImage img3;
 	   
+	   PrintWriter results = new PrintWriter("results.csv"); 
+	   
 	   private String imgFile = "16_right.jpeg";			/////////////Your Image Here////////////
 	   
-	   public CTScanImage() {
-	      try {
+	   public CTScanImage() throws FileNotFoundException {
+	   
+		Scanner scan = new Scanner(new File("ProblemSetList.txt"));   
+		   
+		while(scan.hasNext()) {                                            // Load each image in order.
+           String fileName = scan.nextLine();
+		   
+		   try {
 	    	  
 		     
 		   
@@ -58,7 +66,7 @@ public class CTScanImage {
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "Yes";
+		  answer4 = "No";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
 		  answer5 = "No";
 				  //myScanner.next();
@@ -71,7 +79,7 @@ public class CTScanImage {
 	    	  
 	    	  
 	    	  File input = new File("Scans" + File.separator    //Obtain the jpeg file
-            + imgFile);
+            + fileName);
 	         image = ImageIO.read(input);
 	         yesTrue1 = answer1.equals("Yes") || answer1.equals("yes") || answer1.equals("YES") || answer1.equals("Y") || answer1.equals("y");
 	         yesTrue2 = answer2.equals("Yes") || answer2.equals("yes") || answer2.equals("YES") || answer2.equals("Y") || answer2.equals("y");
@@ -356,8 +364,16 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+	   }//End if
+	   
+	   results.println(fileName);
+	   for(int m = 0; m < 256; m++){
+	   results.println(histogramValues[m]);
 	   }
 	   
+	   
+		}//End while loop
+		results.close();
 	   }//End CTScanImage Class
 	   	   
 	   
