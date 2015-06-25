@@ -38,28 +38,11 @@ public class CTScanImage {
 	   private static double compassConstant = 0.7071;
 	   private int[] differences = new int[8];
 	   
-	
-	   private int xStart = 0;							///////////////////////////////////////
-	   private int xEnd = 2092;							
-	   private int yStart = 0;							
-	   private int yEnd = 2112;
-	   private int boxXStart = 0;
-	   private int 	boxXEnd = 2092;						///////// Your Parameters Here ////////
-	   private int 	boxXStart2 = 0;
-	   private int boxXEnd2 = 2092;
-	   private int boxYStart = 0;
-	   private int boxYEnd = 2112;
-	   private int increment = 20;
-	   private String imgFile = "10_left.jpeg";			///////////////////////////////////////
+	   private BufferedImage img;
+	   private BufferedImage img2;
+	   private BufferedImage img3;
 	   
-	   BufferedImage img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
-	   BufferedImage img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
-	   BufferedImage img3 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
-	   
-	   private int[][] rawValue = new int[xEnd][yEnd];
-	   private int[][] lhnewValue = new int[xEnd][yEnd];
-	   private int[][] lhAverage = new int[xEnd][yEnd];
-	   private int[][] count = new int[xEnd][yEnd]; 
+	   private String imgFile = "16_right.jpeg";			/////////////Your Image Here////////////
 	   
 	   public CTScanImage() {
 	      try {
@@ -69,20 +52,20 @@ public class CTScanImage {
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
 				  //myScanner.next();
-		  //System.out.println("Would you like the historgram values?: ");
-		  answer2 = "No";
+		  //System.out.println("Would you like the histogram values?: ");
+		  answer2 = "no";
 	      //System.out.println("Would you like the histogram equalized pixel values?: ");
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "No";
+		  answer4 = "Yes";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
 		  answer5 = "No";
 				  //myScanner.next();
 		  //System.out.println("Would you like the equalized histogram values?: ");
 		  answer6 = "No";
 		  //System.out.println("Would you like the Compass Image?");
-		  answer7 = "Yes";
+		  answer7 = "No";
 		  //System.out.println("Would you like the normalized histogram values?");
 		  answer8 = "No";
 	    	  
@@ -99,28 +82,53 @@ public class CTScanImage {
 	         yesTrue7 = answer7.equals("Yes") || answer7.equals("yes") || answer7.equals("YES") || answer7.equals("Y") || answer7.equals("y");
 	         yesTrue8 = answer8.equals("Yes") || answer8.equals("yes") || answer8.equals("YES") || answer8.equals("Y") || answer8.equals("y");
 	        
-	          
+	         BufferedImage bimg = ImageIO.read(input);
+	         int width          = bimg.getWidth();
+	         int height         = bimg.getHeight();
+
+	         int xStart = 0;							
+	  	     int xEnd = width;							
+	  	     int yStart = 0;							
+	  	     int yEnd = height;
+	  	     int boxXStart = 0;							///////// Your Parameters Here ////////
+		     int boxXEnd = width;						
+		     int boxXStart2 = 0;
+		     int boxXEnd2 = width;
+		     int boxYStart = 0;
+		     int boxYEnd = height;
+		     int increment = 20;						//////////////////////////////////////
+	  	     
+	  	     
+	  	     img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
+		     img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+		     img3 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+		   
+		     int[][] rawValue = new int[xEnd][yEnd];
+		     int[][] lhnewValue = new int[xEnd][yEnd];
+		     int[][] lhAverage = new int[xEnd][yEnd];
+		     int[][] count = new int[xEnd][yEnd]; 
 	         
 	         
-	         for(int i=yStart; i<yEnd ; i++){
-	            for(int j=xStart; j<xEnd ; j++){
+		     
+		     for(int i=yStart; i<yEnd ; i++){
+	            for(int j=xStart; j<xEnd ; j++){				//Establish pixel values
                    Color c = new Color(image.getRGB(j, i));
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
-	               rawValue[j][i] = red+green+blue;			//Establish pixel values
+	               rawValue[j][i] = red+green+blue;			
 	               Color newColor = new Color(rawValue[j][i],
 	               rawValue[j][i],rawValue[j][i]);
 	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
 	            }
 	         }
 	        
-lhLoop:	     for (int zz = 0; zz < 1000; zz++){						//Start of local histogram equalization loop y, block out when not using lh
-	 		 for (int z = 0; z < 1000; z++){                         //Start of local histogram equalization loop x, block out when not using lh
-outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set to 'boxXStart' for lh, set to xStart for Compass or other histogram
+lhLoop:	     for (int zz = 0; zz < 1000; zz++){						//Start of local histogram equalization loop y
+	 		 for (int z = 0; z < 1000; z++){                         //Start of local histogram equalization loop x
+outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'boxXEnd' to 'yEnd' and 'xEnd' for non lh
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
 	
-		         if(yesTrue7){ 	
+		         if(yesTrue7){ 										//DeLeo Comapss Gradient
                    if(j > 0 && i > 0){								
 	               differences[0] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j-1][i-1] - rawValue[j][i])));
 	               }	else {differences[0] = 0;}
@@ -350,7 +358,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 				}
 	   }
 	   
-	   }
+	   }//End CTScanImage Class
 	   	   
 	   
 	   public static void main(String args[]) throws Exception 
