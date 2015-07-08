@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Scanner;
+import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -55,13 +56,14 @@ public class CTScanImage {
 		   
 		   try {
 	    	  
-		     
+		  long startTime = System.currentTimeMillis();
+		
 		   
 		  //System.out.print("Would you like the raw pixel values?: ");
 		  answer1 = "No";
 				  //myScanner.next();
 		  //System.out.println("Would you like the histogram values?: ");
-		  answer2 = "no";
+		  answer2 = "No";
 	      //System.out.println("Would you like the histogram equalized pixel values?: ");
 	      answer3 = "No";
 	    		  //myScanner.next();
@@ -93,18 +95,37 @@ public class CTScanImage {
 	         BufferedImage bimg = ImageIO.read(input);
 	         int width          = bimg.getWidth();
 	         int height         = bimg.getHeight();
-
-	         int xStart = 0;							
-	  	     int xEnd = width;							
-	  	     int yStart = 0;							
-	  	     int yEnd = height;
-	  	     int boxXStart = 0;							///////// Your Parameters Here ////////
-		     int boxXEnd = width;						
-		     int boxXStart2 = 0;
-		     int boxXEnd2 = width;
-		     int boxYStart = 0;
-		     int boxYEnd = height;
-		     int increment = 20;						//////////////////////////////////////
+	         int centerX        = width/2;
+	         int centerY        = height/2;
+	        
+	         int xStart;
+	         int xEnd;
+	         int yStart;
+	         int yEnd;
+	         
+	         if(width > 2000){
+	         xStart = centerX - 1000;							
+	  	     xEnd = centerX + 1000;
+	         }
+	         else{
+	         xStart = 0;							
+		  	 xEnd = width;
+	         }	 
+	  	     if(height > 2000){
+	         yStart = centerY - 1000;							
+	  	     yEnd = centerY + 1000;
+	  	     }
+	  	     else{
+	  	     yStart = 0;							
+			 yEnd = height;	 
+	  	     }
+	  	     int boxXStart = xStart;							///////// Your Parameters Here ////////
+		     int boxXEnd = xEnd;
+		     int boxXStart2 = xStart;
+		     int boxXEnd2 = xEnd;
+		     int boxYStart = yStart;
+		     int boxYEnd = yEnd;
+		     int increment = 100;						//////////////////////////////////////
 	  	     
 	  	     
 	  	     img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
@@ -120,7 +141,7 @@ public class CTScanImage {
 		     
 		     for(int i=yStart; i<yEnd ; i++){
 	            for(int j=xStart; j<xEnd ; j++){				//Establish pixel values
-                   Color c = new Color(image.getRGB(j, i));
+	            	Color c = new Color(image.getRGB(j, i));
 	               int red = (int)(c.getRed() * 0.299);
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
@@ -131,8 +152,8 @@ public class CTScanImage {
 	            }
 	         }
 	        
-lhLoop:	     for (int zz = 0; zz < 1000; zz++){						//Start of local histogram equalization loop y
-	 		 for (int z = 0; z < 1000; z++){                         //Start of local histogram equalization loop x
+lhLoop:	     for (int zz = 0; zz < 2500; zz++){						//Start of local histogram equalization loop y
+	 		 for (int z = 0; z < 2500; z++){                         //Start of local histogram equalization loop x
 outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'boxXEnd' to 'yEnd' and 'xEnd' for non lh
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
 	
@@ -321,6 +342,9 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	}//End local histogram equalization for loop y
 	        
 	    System.out.println("Image fully assembled.");
+	    long endTime = System.currentTimeMillis();
+	    long runningTime = endTime-startTime;
+//	    System.out.println(runningTime);
 	 
 	      }  //End of 'try' block
 	      catch (Exception e) {System.out.println("Did you put an image, because I got nothing?");}
@@ -369,6 +393,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 	   results.println(fileName);
 	   for(int m = 0; m < 256; m++){
 	   results.println(histogramValues[m]);
+	   histogramValues[m] = 0;
 	   }
 	   
 	   
