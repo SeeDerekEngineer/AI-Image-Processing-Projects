@@ -19,6 +19,7 @@ public class CTScanImage {
 	   private static String answer6;
 	   private static String answer7;
 	   private static String answer8;
+	   private static String answer9;
 	   private boolean yesTrue1;
 	   private boolean yesTrue2;
 	   private boolean yesTrue3;
@@ -27,6 +28,7 @@ public class CTScanImage {
 	   private boolean yesTrue6;
 	   private boolean yesTrue7;
 	   private boolean yesTrue8;
+	   private boolean yesTrue9;
 	   private double pixelsTotal = 0;
 	   private int[] transformHistogram = new int[256];
 	   private int[] equalizedHistogram = new int[256];
@@ -68,7 +70,7 @@ public class CTScanImage {
 	      answer3 = "No";
 	    		  //myScanner.next();
 		  //System.out.println("Would you like the grayscale image?: ");
-		  answer4 = "No";
+		  answer4 = "Yes";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
 		  answer5 = "No";
 				  //myScanner.next();
@@ -78,6 +80,8 @@ public class CTScanImage {
 		  answer7 = "No";
 		  //System.out.println("Would you like the normalized histogram values?");
 		  answer8 = "No";
+		  //System.out.println("Would you like the image with grouped pixels?");
+		  answer9 = "Yes";
 	    	  
 	    	  
 	    	  File input = new File("Scans" + File.separator    //Obtain the jpeg file
@@ -91,7 +95,8 @@ public class CTScanImage {
 	         yesTrue6 = answer6.equals("Yes") || answer6.equals("yes") || answer6.equals("YES") || answer6.equals("Y") || answer6.equals("y");
 	         yesTrue7 = answer7.equals("Yes") || answer7.equals("yes") || answer7.equals("YES") || answer7.equals("Y") || answer7.equals("y");
 	         yesTrue8 = answer8.equals("Yes") || answer8.equals("yes") || answer8.equals("YES") || answer8.equals("Y") || answer8.equals("y");
-	        
+	         yesTrue9 = answer9.equals("Yes") || answer9.equals("yes") || answer9.equals("YES") || answer9.equals("Y") || answer9.equals("y");
+	         
 	         BufferedImage bimg = ImageIO.read(input);
 	         int width          = bimg.getWidth();
 	         int height         = bimg.getHeight();
@@ -128,9 +133,9 @@ public class CTScanImage {
 		     int increment = 100;						//////////////////////////////////////
 	  	     
 	  	     
-	  	     img = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
-		     img2 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
-		     img3 = new BufferedImage(xEnd, yEnd, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+	  	     img = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
+		     img2 = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+		     img3 = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
 		   
 		     int[][] rawValue = new int[xEnd][yEnd];
 		     int[][] lhnewValue = new int[xEnd][yEnd];
@@ -146,9 +151,7 @@ public class CTScanImage {
 	               int green = (int)(c.getGreen() * 0.587);
 	               int blue = (int)(c.getBlue() *0.114);
 	               rawValue[j][i] = red+green+blue;			
-	               Color newColor = new Color(rawValue[j][i],
-	               rawValue[j][i],rawValue[j][i]);
-	               img.setRGB(j,i,newColor.getRGB());   //Establish grayscale image
+	               
 	            }
 	         }
 	        
@@ -158,22 +161,22 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'b
 		            for(int j=boxXStart; j<boxXEnd ; j++){      
 	
 		         if(yesTrue7){ 										//DeLeo Comapss Gradient
-                   if(j > 0 && i > 0){								
+                   if(j > xStart && i > yStart){								
 	               differences[0] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j-1][i-1] - rawValue[j][i])));
 	               }	else {differences[0] = 0;}
-	               if(i > 0){
+	               if(i > yStart){
 	               differences[1] = Math.abs(rawValue[j][i]-rawValue[j][i-1]);
 	               }	else {differences[1] = 0;}
-	               if(j < xEnd-1 && i > 0){
+	               if(j < xEnd-1 && i > yStart){
 	               differences[2] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j+1][i-1] - rawValue[j][i])));
 	               }	else {differences[2] = 0;}
-	               if(j > 0){
+	               if(j > xStart){
 	               differences[3] = Math.abs(rawValue[j][i]-rawValue[j-1][i]);
 	               }	else {differences[3] = 0;}
 	               if(j < xEnd - 1){
 	               differences[4] = Math.abs(rawValue[j][i]-rawValue[j+1][i]);
 	               }	else {differences[4] = 0;}
-	               if(j > 0 && i < yEnd - 1){
+	               if(j > xStart && i < yEnd - 1){
 	               differences[5] = (int) Math.abs(rawValue[j][i]-(compassConstant*(rawValue[j-1][i+1] - rawValue[j][i])));
 	               }	else {differences[5] = 0;}
 	               if(i < yEnd - 1){
@@ -197,7 +200,46 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'b
 		     	        	break outerloop;
 		     	        }  
 	             
-		            	
+		     	       if(yesTrue9){ 										//Pixel Grouping
+		                 
+		     	    	 if(j > xStart && i > yStart){
+		     	    	  if(Math.abs(rawValue[j-1][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i-1];}
+		     	    	 }
+		     	    	 if(i > yStart){
+		     	    	  if(Math.abs(rawValue[j][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j][i-1];}
+		     	    	 } 
+		     	    	 if(j < xEnd -1 && i > yStart){ 
+		     	    	  if(Math.abs(rawValue[j+1][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i-1];}
+		     	    	 }
+		     	    	 if(j > xStart){
+		     	    	  if(Math.abs(rawValue[j-1][i] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i];}
+		     	    	 }  
+		     	    	 if(j < xEnd -1){  
+		     	    	  if(Math.abs(rawValue[j+1][i] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i];}
+		     	    	 }
+		     	    	 if(j > xStart && i < yEnd - 1){  
+		     	    	  if(Math.abs(rawValue[j-1][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i+1];}
+		     	    	 } 
+		     	    	 if(i < yEnd -1){ 
+		     	    	  if(Math.abs(rawValue[j][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j][i+1];}
+		     	    	 }
+		     	    	 if(j < xEnd -1 && i < yEnd -1){ 
+		     	    	  if(Math.abs(rawValue[j+1][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i+1];}
+		     	    	 }  
+
+			             }//End if yesTrue9  
+				           
+				            	 if(j >= xEnd){
+				     	        	break;
+				     	        }//End if statement
+				     		               
+				     	        if(i >= yEnd){
+				     	        	break outerloop;
+				     	        }  
+				  
+				  Color newColor = new Color(rawValue[j][i],
+				  rawValue[j][i],rawValue[j][i]);
+				  img.setRGB(j-xStart,i-yStart,newColor.getRGB());   //Establish grayscale image  	
 		            	
 		          for (int k =0; k < 256; k++){     //Establish Histogram values
 	            	   if(k == rawValue[j][i]){
@@ -289,7 +331,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		 //              if(j >= 492 && j < 592 && i >= 572 && i < 672){
 		               Color newColor2 = new Color(lhAverage[j][i],
 		            		   lhAverage[j][i], lhAverage[j][i]);
-		               img2.setRGB(j, i, newColor2.getRGB());
+		               img2.setRGB(j-xStart, i-yStart, newColor2.getRGB());
 		 //              }
 		               
 		              if(yesTrue7){
@@ -299,7 +341,7 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		              else {lhAverage[j][i] = 0;}
 		               Color newColor3 = new Color(lhAverage[j][i],
 		            		   lhAverage[j][i], lhAverage[j][i]);
-	               		img3.setRGB(j, i, newColor3.getRGB());
+	               		img3.setRGB(j-xStart, i-yStart, newColor3.getRGB());
 	      				}
 		               
 		            
