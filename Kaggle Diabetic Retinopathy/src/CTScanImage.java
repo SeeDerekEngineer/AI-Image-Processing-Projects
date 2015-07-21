@@ -44,6 +44,7 @@ public class CTScanImage {
 	   private BufferedImage img;
 	   private BufferedImage img2;
 	   private BufferedImage img3;
+	   private BufferedImage img4;
 	   
 	   PrintWriter results = new PrintWriter("results.csv"); 
 	   
@@ -72,7 +73,7 @@ public class CTScanImage {
 		  //System.out.println("Would you like the grayscale image?: ");
 		  answer4 = "Yes";
 		  //System.out.println("Would you like the histogram equalized grayscale image?: ");
-		  answer5 = "No";
+		  answer5 = "Yes";
 				  //myScanner.next();
 		  //System.out.println("Would you like the equalized histogram values?: ");
 		  answer6 = "No";
@@ -136,8 +137,10 @@ public class CTScanImage {
 	  	     img = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);   //Determines size of produced image
 		     img2 = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
 		     img3 = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
-		   
+		     img4 = new BufferedImage(xEnd-xStart, yEnd-yStart, BufferedImage.TYPE_INT_RGB);  //Determines size of produced image
+		     
 		     int[][] rawValue = new int[xEnd][yEnd];
+		     int[][] groupValue = new int[xEnd][yEnd];
 		     int[][] lhnewValue = new int[xEnd][yEnd];
 		     int[][] lhAverage = new int[xEnd][yEnd];
 		     int[][] count = new int[xEnd][yEnd]; 
@@ -203,30 +206,37 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'b
 		     	       if(yesTrue9){ 										//Pixel Grouping
 		                 
 		     	    	 if(j > xStart && i > yStart){
-		     	    	  if(Math.abs(rawValue[j-1][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i-1];}
+		     	    	  if(Math.abs(rawValue[j-1][i-1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	 else{groupValue[j][i] = 255;}
 		     	    	 }
 		     	    	 if(i > yStart){
-		     	    	  if(Math.abs(rawValue[j][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j][i-1];}
-		     	    	 } 
+		     	    	  if(Math.abs(rawValue[j][i-1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
+		     	    	 }
 		     	    	 if(j < xEnd -1 && i > yStart){ 
-		     	    	  if(Math.abs(rawValue[j+1][i-1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i-1];}
+		     	    	  if(Math.abs(rawValue[j+1][i-1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
 		     	    	 }
 		     	    	 if(j > xStart){
-		     	    	  if(Math.abs(rawValue[j-1][i] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i];}
-		     	    	 }  
+		     	    	  if(Math.abs(rawValue[j-1][i] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
+		     	    	 }
 		     	    	 if(j < xEnd -1){  
-		     	    	  if(Math.abs(rawValue[j+1][i] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i];}
+		     	    	  if(Math.abs(rawValue[j+1][i] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
 		     	    	 }
 		     	    	 if(j > xStart && i < yEnd - 1){  
-		     	    	  if(Math.abs(rawValue[j-1][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j-1][i+1];}
-		     	    	 } 
+		     	    	  if(Math.abs(rawValue[j-1][i+1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
+		     	    	 }
 		     	    	 if(i < yEnd -1){ 
-		     	    	  if(Math.abs(rawValue[j][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j][i+1];}
+		     	    	  if(Math.abs(rawValue[j][i+1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	else{groupValue[j][i] = 255;}
 		     	    	 }
 		     	    	 if(j < xEnd -1 && i < yEnd -1){ 
-		     	    	  if(Math.abs(rawValue[j+1][i+1] - rawValue[j][i]) < 10){rawValue[j][i]=rawValue[j+1][i+1];}
+		     	    	  if(Math.abs(rawValue[j+1][i+1] - rawValue[j][i]) > 5){groupValue[j][i]=0;}
+		     	    	 else{groupValue[j][i] = 255;}
 		     	    	 }  
-
 			             }//End if yesTrue9  
 				           
 				            	 if(j >= xEnd){
@@ -240,7 +250,10 @@ outerloop:	    for(int i=boxYStart; i<boxYEnd ; i++){					//Set 'boxYEnd' and 'b
 				  Color newColor = new Color(rawValue[j][i],
 				  rawValue[j][i],rawValue[j][i]);
 				  img.setRGB(j-xStart,i-yStart,newColor.getRGB());   //Establish grayscale image  	
-		            	
+		          Color otherNewColor = new Color(groupValue[j][i],
+		          groupValue[j][i],groupValue[j][i]);
+		          img4.setRGB(j-xStart, i-yStart, otherNewColor.getRGB());
+				  
 		          for (int k =0; k < 256; k++){     //Establish Histogram values
 	            	   if(k == rawValue[j][i]){
 	            		   histogramValues[k] = histogramValues[k] + 1;  	   
@@ -426,6 +439,17 @@ outloop:	     for(int i=boxYStart; i<boxYEnd ; i++){
 		            + "CompassScan.png");
 				   try {
 					ImageIO.write(img3, "png", f);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	   }//End if
+	   
+	   if(yesTrue9){
+		   f = new File("NewScans" + File.separator
+		            + "GroupedPixels.png");
+				   try {
+					ImageIO.write(img4, "png", f);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
